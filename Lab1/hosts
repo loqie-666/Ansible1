@@ -1,0 +1,3 @@
+[webservers]
+klient1 ansible_host=192.168.41.146
+klient2 ansible_host=192.168.41.147
