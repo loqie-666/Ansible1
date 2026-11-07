@@ -1,0 +1,21 @@
+---
+# Lab 3: PHP eemaldamine kliendiserverist (uninst_php.yml)
+# Ansible-server: 192.168.41.145, klient1: 192.168.41.146
+#
+# Kasitsi eemaldamise kasud (vale PHP versiooni korral):
+#   apt-get purge php7.*
+#   apt-get purge php7.X-common
+#   apt remove php7.X*
+# Siin on kliendil PHP 8.4, seega kasutame samasugust purge loogikat php* paketile.
+- name: PHP eemaldamine
+  hosts: klient1
+
+  tasks:
+    # Task 1: eemaldame PHP ja koik sellega seotud paketid (purge)
+    - name: eemaldame PHP paketid
+      apt:
+        name:
+          - "php*"
+          - "libapache2-mod-php*"
+        state: absent
+        purge: yes

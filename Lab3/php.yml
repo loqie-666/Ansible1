@@ -1,0 +1,25 @@
+---
+# Lab 3: PHP paigaldamine Debian kliendile
+# Ansible-server: 192.168.41.145, klient1: 192.168.41.146
+- name: PHP paigaldamine
+  hosts: klient1
+
+  tasks:
+    # Task 1: paigaldame php (state=latest -> viimane versioon)
+    - name: install php
+      apt:
+        name: php
+        state: latest
+        update_cache: yes
+
+    # Task 2: loome phpinfo.php faili PHP toe kontrolliks (copy moodul)
+    - name: loome phpinfo.php fail
+      copy:
+        dest: /var/www/html/phpinfo.php
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          <?php
+          phpinfo();
+          ?>
