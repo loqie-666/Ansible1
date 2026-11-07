@@ -1,0 +1,18 @@
+<?php
+/* phpMyAdmini konfiguratsioon, loodud Ansible template mooduliga */
+/* Masin: {{ ansible_hostname }} ({{ ansible_default_ipv4.address }}) */
+declare(strict_types=1);
+
+/* Unikaalne voti sessiooniandmete kruptimiseks */
+$cfg['blowfish_secret'] = '{{ pma_blowfish_secret }}';
+
+/* MySQL serveri andmed */
+$i = 0;
+$i++;
+$cfg['Servers'][$i]['auth_type'] = 'cookie';
+$cfg['Servers'][$i]['host'] = '{{ pma_mysql_host }}';
+$cfg['Servers'][$i]['compress'] = false;
+$cfg['Servers'][$i]['AllowNoPassword'] = false;
+
+$cfg['UploadDir'] = '';
+$cfg['SaveDir'] = '';
