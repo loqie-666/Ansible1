@@ -1,0 +1,35 @@
+---
+# Lab 4 iseseisev ylesanne: MySQL root kasutaja parool ja /root/.my.cnf
+# Ansible-server: 192.168.41.145, klient1: 192.168.41.146
+- name: MySQL root kasutaja seadistamine
+  hosts: klient1
+
+  tasks:
+    # Task 1: Ansible MySQL moodulid vajavad Pythoni teeki PyMySQL
+    - name: Paigaldame python3-pymysql
+      apt:
+        name: python3-pymysql
+        state: present
+
+    # Task 2: maarame root kasutajale parooli qwerty (paroolita sisselogimine keelatakse)
+    - name: Seadistame root parooli
+      community.mysql.mysql_user:
+        name: root
+        host: localhost
+        plugin_auth_string: qwerty
+        plugin: caching_sha2_password
+        priv: "*.*:ALL,GRANT"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+
+    # Task 3: salvestame uhenduse andmed faili /root/.my.cnf (ainult root loeb)
+    - name: Loome /root/.my.cnf
+      copy:
+        dest: /root/.my.cnf
+        owner: root
+        group: root
+        mode: '0600'
+        content: |
+          [client]
+          user=root
+          password=qwerty
