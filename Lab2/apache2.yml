@@ -1,0 +1,64 @@
+---
+# Lab 2: Apache2 paigaldamine ja userdir seadistamine
+# Kliendiserver: klient1 (Debian), IP 192.168.41.146
+# Ansible-server: 192.168.41.145
+- name: Apache2 veebiserveri paigaldamine
+  hosts: klient1
+
+  tasks:
+    # Task 1: paigaldame apache2 apt mooduli abil
+    - name: install apache2
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    # Task 2: loome user-ile public_html kataloogi (file moodul)
+    - name: Loome public_html kataloog user_ile
+      file:
+        path: /home/user/public_html
+        state: directory
+        owner: user
+        group: user
+        mode: '0755'
+
+    # Task 3: Apache peab saama user kodukataloogi siseneda (muidu Forbidden)
+    - name: Anname kodukataloogile ligipaasu
+      file:
+        path: /home/user
+        mode: '0711'
+
+    # Task 4: lubame userdir mooduli (apache2_module)
+    - name: Lubame userdir mod
+      apache2_module:
+        name: userdir
+        state: present
+
+    # Task 5: taaskaivitame apache2 (service moodul)
+    - name: Apache2 serverile alglaadimine (restart)
+      service:
+        name: apache2
+        state: restarted
+
+    # Task 6: kopeerime index.html user-i public_html kataloogi (copy moodul)
+    - name: Kopeerime index.html fail USER_ile kodus_public_html kataloogi
+      copy:
+        src: /var/www/html/index.html
+        dest: /home/user/public_html/index.html
+        remote_src: yes
+        owner: user
+        group: user
+        mode: '0644'
+
+    # Task 7: muudame lehe pealkirja (lineinfile moodul)
+    - name: user index.html redigeerimine
+      lineinfile:
+        path: /home/user/public_html/index.html
+        regexp: '^\s*Apache2 Debian Default Page\s*$'
+        line: '          USERi lehekylg'
+
+    # Task 8: taaskaivitame apache2 lopus
+    - name: Apache2 restart lopus
+      service:
+        name: apache2
+        state: restarted

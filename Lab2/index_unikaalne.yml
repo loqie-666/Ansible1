@@ -1,0 +1,27 @@
+---
+# Iseseisev ylesanne: unikaalne /var/www/html/index.html igale kliendile
+# Hostinimi ja IP votame Ansible faktidest (ansible_hostname, ansible_default_ipv4)
+- name: Unikaalne Apache vaikeleht
+  hosts: klient1
+
+  tasks:
+    # Asendame Apache vaikelehe oma lehega (copy moodul, content parameeter)
+    - name: Asendame vaikelehe unikaalse index.html failiga
+      copy:
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          <!DOCTYPE html>
+          <html lang="et">
+          <head>
+            <meta charset="UTF-8">
+            <title>{{ ansible_hostname }}</title>
+          </head>
+          <body>
+            <h1>Tere tulemast!</h1>
+            <p>Hostinimi: {{ ansible_hostname }}</p>
+            <p>IP-aadress: {{ ansible_default_ipv4.address }}</p>
+          </body>
+          </html>
